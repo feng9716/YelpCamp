@@ -1,0 +1,42 @@
+<%- layout('layouts/boilerplate') %> 
+<div class="row">
+    <h1 class = "text-center">Edit Campground</h1>
+    <div class="col-6 offset-3">
+        <form action="/campgrounds/<%=camp._id%>?_method=PUT" method="POST" novalidate class = "validated-form">
+            <div class = "mb-3">
+                <label class = "form-label" for="title">Title</label>
+                <input class = "form-control" type="text" id = "title" name = "campground[title] required"
+                value = "<%= camp.title %>">
+            </div>
+
+            <div class="mb-3">
+                <label for="price" class = "form-label">Campground Price</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="price-label">$</span>
+                    <input type="text" class="form-control" placeholder="0.00" aria-label="price" aria-describedby="price-label" name = "campground[price]" value = "<%= camp.price %> " required>
+                  </div>
+            </div>
+
+            <div class = "mb-3">
+                <label class = "form-label" for="location">Location</label>
+                <input class = "form-control" type="text" id = "location" name = "campground[location]"
+                value = "<%= camp.location %> " required>
+            </div>
+
+            <div class = "mb-3">
+                <label class = "form-label" for="image">Image URL</label>
+                <input class = "form-control" type="text" id = "image" name = "campground[image]" 
+                value = "<%= camp.image %> " required>
+            </div>
+
+            <div class = "mb-3">
+                <label class = "form-label" for="description">Description</label>
+                <textarea class = "form-control" id = "description" name = "campground[description]" required><%= camp.description %></textarea>
+            </div>
+            <button class = "btn btn-success mb-3">Update</button>
+        </form>
+    
+        <a href="/campgrounds/<%= camp._id %> ">Back to Camp</a>
+    </div>
+</div>
+    
