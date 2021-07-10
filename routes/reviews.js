@@ -1,4 +1,5 @@
 const express = require('express');
+// Merge params from app.js will be merged here
 const router = express.Router({mergeParams: true});
 
 const catchAsync = require('../util/catchAsync');
