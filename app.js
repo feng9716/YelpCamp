@@ -10,10 +10,7 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
-const Review = require('./models/review');
 const Joi = require('joi');
-const {campgroundSchema, reviewSchema} = require('./schemas.js');
-const review = require('./models/review');
 
 // Require all the routes
 const userRoutes = require('./routes/users');
@@ -67,7 +64,6 @@ passport.deserializeUser(User.deserializeUser());
 // Flash middleware and currentUser
 app.use(flash());
 app.use((req,res,next) => {
-    // console.log(req.session);
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.currentUser = req.user;

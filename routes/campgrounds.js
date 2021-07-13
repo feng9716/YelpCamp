@@ -1,79 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../util/catchAsync')
-const ExpressError = require('../util/ExpressError');
-const methodOverride = require('method-override');
-const Campground = require('../models/campground');
-const Review = require('../models/review');
-const {campgroundSchema} = require('../schemas.js');
-const {isLoggedIn} = require('../middleware');
+const {isLoggedIn, validateCampground, isAuthor} = require('../middleware');
+const campgrounds = require('../controllers/campgrounds.js');
 
-const validateCampground = (req,res,next) => {
-    const {error} = campgroundSchema.validate(req.body);
+router.route('/')
+    .get(catchAsync(campgrounds.index))
+    // Make new campground
+    .post(isLoggedIn,validateCampground, catchAsync(campgrounds.create));
 
-    if(error){
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg,400)
-    }else{
-        next();
-    }
-}
-
-router.get('/', catchAsync(async(req,res) => {
-    const campgrounds = await Campground.find({});
-    res.render('campgrounds/index',{campgrounds})
-}));
 
 //Put this above :id to avoid error 
-router.get('/new', isLoggedIn, (req,res) => {
-    res.render('campgrounds/new');
-});
+router.get('/new', isLoggedIn, campgrounds.newForm);
 
-router.get('/:id', catchAsync(async (req,res) => {
-    const {id} = req.params;
-    const camp = await Campground.findById(id).populate('reviews');
-    if(!camp){
-        req.flash('error', 'The camp is not listed anymore');
-        res.redirect('/campgrounds')
-    }
-    res.render('campgrounds/show',{camp});
-}));
-
-// Make new Campground
-router.post('/', isLoggedIn,validateCampground, catchAsync(async (req,res,next) => {
+router.route('/:id')
+    .get(catchAsync(campgrounds.show))
+    // Update a campground
+    .put(validateCampground,isLoggedIn, isAuthor, catchAsync(campgrounds.update))
+    // Delete a campGround
+    .delete(isLoggedIn,isAuthor, catchAsync(campgrounds.delete));
     
-    const camp = new Campground(req.body.campground);
-    await camp.save();
-    req.flash('success', 'Camp added successfully');
-    res.redirect(`/campgrounds/${camp._id}`);
-    
-}))
-
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req,res) => {
-    const {id} = req.params;
-    const camp = await Campground.findById(id);
-    if(!camp){
-        req.flash('error', 'The camp is not listed anymore');
-        res.redirect('/campgrounds')
-    }
-    res.render('campgrounds/edit.ejs',{camp});
-}))
-
-// Update a campground
-router.put('/:id', validateCampground, catchAsync(async (req,res,next) => {
-    // res.send("IT WORKED!");
-    const {id} = req.params;
-    const camp = await Campground.findByIdAndUpdate(id, {...req.body.campground});
-    req.flash('success', "Successfully updated campground");
-    res.redirect(`/campgrounds/${camp._id}`);
-    
-}))
-
-router.delete('/:id', isLoggedIn, catchAsync(async(req,res) => {
-    const {id} = req.params;
-    const camp = await Campground.findByIdAndDelete(id);
-    req.flash('success', "Successfully delete campground");
-    res.redirect('/campgrounds');
-}))
+// Enter edit form
+router.get('/:id/edit', isLoggedIn, isAuthor,catchAsync(campgrounds.editPage))
 
 module.exports = router;
