@@ -29,11 +29,17 @@ module.exports.show = async (req,res) => {
 }
 
 module.exports.create = async (req,res,next) => {
-    
     const camp = new Campground(req.body.campground);
+    camp.images = req.files.map(f => ({
+        url: f.path,
+        filename: f.filename
+    }));
     // Add the _id as the author
     camp.author = req.user._id;
     await camp.save();
+
+    // console.log(camp);
+
     req.flash('success', 'Camp added successfully');
     res.redirect(`/campgrounds/${camp._id}`);
     
