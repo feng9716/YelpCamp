@@ -1,25 +1,38 @@
 <%- layout('layouts/boilerplate') %> 
-    <h1>All Campgrounds</h1>
-    <div>
-        <a class = "btn btn-success mb-3"href="/campgrounds/new">New Camp</a>
-    </div>
-    <% for(let camp of campgrounds) {%>
-        <div class = "card mb-3">
-            <div class="row">
-                <div class = "col-md-4">
-                    <img class = "img-fluid" alt="" src = "<%= camp.image %>">
-                </div>
-                <div class="col-md-8">
-                    <div class="card-body">
-                        <h5 class = "card-title"><%= camp.title %> </h5>
-                        <p class = "card-text"><%= camp.description %> </p>
-                        <p class="card-text">
-                            <small class="text-muted"><%= camp.location%></small>
-                        </p>
-                        <a href="/campgrounds/<%= camp._id %> " class="btn btn-primary">View <%= camp.title %></a>
-                    </div>
+<div id = "map" style = "width: 100%; height: 500px"> 
+
+</div>
+
+<h1>All Campgrounds</h1>
+<div>
+    <a class = "btn btn-success mb-3"href="/campgrounds/new">New Camp</a>
+</div>
+<% for(let camp of campgrounds) {%>
+    <div class = "card mb-3">
+        <div class="row">
+            <div class = "col-md-4">
+                <% if(camp.images.length) {%>
+                    <img class = "img-fluid" alt="" src = "<%= camp.images[0].url %>">
+                <% } else{ %>   
+                    <img class = "img-fluid" alt="" src = "https://tacm.com/wp-content/uploads/2018/01/no-image-available.jpeg">
+                <% } %> 
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class = "card-title"><%= camp.title %> </h5>
+                    <p class = "card-text"><%= camp.description %> </p>
+                    <p class="card-text">
+                        <small class="text-muted"><%= camp.location%></small>
+                    </p>
+                    <a href="/campgrounds/<%= camp._id %> " class="btn btn-primary">View <%= camp.title %></a>
                 </div>
             </div>
         </div>
-    <% } %>  
-    <% layout('layouts/boilerplate')%>
+    </div>
+<% } %>  
+<% layout('layouts/boilerplate')%>
+
+<script>
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+</script>
+<script src="/javascripts/clusterMap.js"></script>
