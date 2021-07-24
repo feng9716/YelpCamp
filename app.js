@@ -2,7 +2,6 @@ if(process.env.NODE_ENV !== "production"){
     require('dotenv').config();
 }
 
-
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -15,6 +14,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
+// Deployment online cloud DB
+// const dbUrl = process.env.DB_URL;
+
 const Joi = require('joi');
 
 // Require all the routes
@@ -23,6 +25,7 @@ const campgroundRoutes = require('./routes/campgrounds');
 const reviewRoutes = require('./routes/reviews');
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {
+// mongoose.connect(dbUrl,{
     useNewUrlParser: true, 
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -84,7 +87,7 @@ app.use('/', userRoutes);
 
 
 app.get('/' ,(req,res) => {
-    res.render('home');
+    res.render('campgrounds/home.ejs');
 });
 
 app.all('*', (req,res,next) => {
